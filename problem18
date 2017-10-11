@@ -1,0 +1,11 @@
+Common problems seem to be getting a weird cannot cast exception from BytesWritable to NullWritable. Other common problem is BytesWritable getBytes is a totally pointless pile of nonsense which doesn't get bytes at all. What getBytes does is get your bytes than adds a ton of zeros on the end! You have to use copyBytes
+
+val rdd: RDD[Array[Byte]] = ???
+
+// To write
+rdd.map(bytesArray => (NullWritable.get(), new BytesWritable(bytesArray)))
+  .saveAsSequenceFile("/output/path", codecOpt)
+
+// To read
+val rdd: RDD[Array[Byte]] = sc.sequenceFile[NullWritable, BytesWritable]("/input/path")
+  .map(_._2.copyBytes())
