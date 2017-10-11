@@ -1,0 +1,20 @@
+Problem Scenario 59 : You have been given below code snippet.
+val x = sc.parallelize(1 to 20)
+val y = sc.parallelize(10 to 30) operationl
+z.collect
+Write a correct code snippet for operationl which will produce desired output, shown below.
+Array[lnt] = Array(16,12, 20,13,17,14,18,10,19,15,11)
+
+scala> val x = sc.parallelize(1 to 20)
+x: org.apache.spark.rdd.RDD[Int] = ParallelCollectionRDD[0] at parallelize at <console>:27
+
+scala> val y = sc.parallelize(10 to 30)
+y: org.apache.spark.rdd.RDD[Int] = ParallelCollectionRDD[1] at parallelize at <console>:27
+
+scala> val z = x.intersection(y)
+z: org.apache.spark.rdd.RDD[Int] = MapPartitionsRDD[7] at intersection at <console>:31
+
+scala> z.collect()
+res0: Array[Int] = Array(16, 14, 12, 18, 20, 10, 13, 19, 15, 11, 17)            
+
+
