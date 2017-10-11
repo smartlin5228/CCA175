@@ -1,0 +1,13 @@
+# Hive
+hive
+create table departments (department_id int, department_name string);
+desc departments;
+
+# for importing error of access use sudo -u hdfs to run the command by the user having hadoop access
+
+sudo -u hdfs sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments -hive-home /user/hive/warehouse -hive-import -hive-overwrite -hive-table hadoopexam.departments
+
+# Import data in non-existing tables in hive and create table while importing use -create-hive-table
+
+sudo -u hdfs sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments -hive-home /user/hive/warehouse -hive-import -hive-overwrite -hive-table hadoopexam.departments_new -create-hive-table
+ 
