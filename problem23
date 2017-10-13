@@ -1,0 +1,2 @@
+sqoop import-all-tables -m3 --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba -password=cloudera -hive-import --hive-overwrite -create-hive-table --compress --compression-codec org.apache.hadoop.io.compress.SnappyCodec --outdir java_output
+
