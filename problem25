@@ -1,0 +1,5 @@
+// Hive and SQL operations are o
+
+sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=department_hive01 --hive-home /user/hive/waerhouse --hive-import -hive-overwrite -hive-table departments_hive01 --fields-terminated-by '\001' --null-string '' --null-non-string 999 -split-by id -m 1
+
+// Notice the --null-string and --nul-non-string options are for string data type with null value and non-string data type
