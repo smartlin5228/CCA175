@@ -1,0 +1,7 @@
+// Sqoop export to existing table using -update-key and -update-mode
+
+sqoop export --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments --export-dir new_data -batch -m 1 -update-key department_id -update-mode allowinsert
+
+
+
+sqoop export --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments --export-dir new_data -batch -m 1 -update-key department_id -update-mode updateonly
