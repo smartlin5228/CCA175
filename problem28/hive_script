@@ -1,0 +1,4 @@
+hive> CREATE TABLE flumeemployee (name string, salary int, sex string, age int) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+OK
+Time taken: 0.9 seconds
+
