@@ -1,0 +1,16 @@
+scala> val one = sc.textFile("new_data/file1.txt").map{{_.split(",", -1) match{ case Array(a,b,c) => (a, (b,c))}}}
+one: org.apache.spark.rdd.RDD[(String, (String, String))] = MapPartitionsRDD[2] at map at <console>:27
+
+scala> val two = sc.textFile("new_data/file2.txt").map{{_.split(",", -1) match{ case Array(a,b,c) => (a, (b,c))}}}
+one: org.apache.spark.rdd.RDD[(String, (String, String))] = MapPartitionsRDD[2] at map at <console>:27
+
+scala> val joined = one.join(two)
+joined: org.apache.spark.rdd.RDD[(String, ((String, String), (String, String)))] = MapPartitionsRDD[11] at join at <console>:31
+
+
+scala> val sum = joined.map {case (_, ((_,num2),(_,_))) => num2.toInt}.reduce(_+_)
+sum: Int = 12  
+
+scala> joined.collect
+res0: Array[(String, ((String, String), (String, String)))] = Array((2,((7,4),(i,j))), (3,((8,3),(k,l))), (1,((9,5),(g,h))))
+
