@@ -1,0 +1,16 @@
+scala> val a = sc.parallelize(List("dog", "salmon", "salmon", "rat", "elephant"), 3)
+a: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[0] at parallelize at <console>:27
+
+scala> val b = a.keyBy(_.length)
+b: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[1] at keyBy at <console>:29
+
+scala> val c = sc.parallelize(List("dog","cat","gnu","salmon","rabbit","turkey","wolf","bear","bee"), 3)
+c: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[2] at parallelize at <console>:27
+
+scala> val d = c.keyBy(_.length)
+d: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[3] at keyBy at <console>:29
+
+scala> b.leftOuterJoin(d).collect
+res3: Array[(Int, (String, Option[String]))] = Array((6,(salmon,Some(salmon))), (6,(salmon,Some(rabbit))), (6,(salmon,Some(turkey))), (6,(salmon,Some(salmon))), (6,(salmon,Some(rabbit))), (6,(salmon,Some(turkey))), (3,(dog,Some(dog))), (3,(dog,Some(cat))), (3,(dog,Some(gnu))), (3,(dog,Some(bee))), (3,(rat,Some(dog))), (3,(rat,Some(cat))), (3,(rat,Some(gnu))), (3,(rat,Some(bee))), (8,(elephant,None)))
+
+leftOuterJoin [Pair]: Performs an left outer join using two key-value RDDs. Please note that the keys must be generally comparable to make this work keyBy : Constructs two- component tuples (key-value pairs) by applying a function on each data item. Trie result of the function becomes the key and the original data item becomes the value of the newly created tuples.
