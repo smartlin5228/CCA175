@@ -1,0 +1,10 @@
+scala> val a = sc.parallelize(List("dog", "tiger", "lion", "cat", "spider", "eagle"), 2)
+a: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[76] at parallelize at <console>:27
+
+scala> val b = a.keyBy(_.length)
+b: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[77] at keyBy at <console>:29
+
+scala> b.collect
+res13: Array[(Int, String)] = Array((3,dog), (5,tiger), (4,lion), (3,cat), (6,spider), (5,eagle))
+
+
