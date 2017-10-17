@@ -1,0 +1,96 @@
+scala> val course = sc.textFile("sparksql4/course.txt")
+course: org.apache.spark.rdd.RDD[String] = sparksql4/course.txt MapPartitionsRDD[11] at textFile at <console>:27
+
+scala> val fee = sc.textFile("sparksql4/fee.txt")
+fee: org.apache.spark.rdd.RDD[String] = sparksql4/fee.txt MapPartitionsRDD[13] at textFile at <console>:27
+
+
+scala> case class Course(id: Integer, name:String)
+defined class Course
+scala> case class Fee(id: Integer, fee: Integer)
+defined class Fee
+
+scala> val courseRDD = course.map(_.split(",")).map(c => Course(c(0).toInt, c(1)))
+courseRDD: org.apache.spark.rdd.RDD[Course] = MapPartitionsRDD[15] at map at <console>:33
+
+
+scala> val feeRDD = fee.map(_.split(",")).map(f => Fee(f(0).toInt, f(1).toInt))
+feeRDD: org.apache.spark.rdd.RDD[Fee] = MapPartitionsRDD[17] at map at <console>:31
+
+scala> val courseDF = courseRDD.toDF()
+courseDF: org.apache.spark.sql.DataFrame = [id: int, name: string]
+
+scala> val feeDF = feeRDD.toDF()
+feeDF: org.apache.spark.sql.DataFrame = [id: int, fee: int]
+
+scala> courseDF.registerTempTable("course")
+
+scala> feeDF.registerTempTable("fee")
+
+scala> val results = sqlContext.sql("""SELECT * FROM course""")
+results: org.apache.spark.sql.DataFrame = [id: int, name: string]
+
+scala> results.show()
++---+------+
+| id|  name|
++---+------+
+|  1|Hadoop|
+|  2| Spark|
+|  3| HBase|
++---+------+
+
+scala> val results = sqlContext.sql("""SELECT * FROM course LEFT JOIN fee ON course.id = fee.id""")
+results: org.apache.spark.sql.DataFrame = [id: int, name: string, id: int, fee: int]
+
+scala> results.show()
++---+------+----+----+                                                          
+| id|  name|  id| fee|
++---+------+----+----+
+|  1|Hadoop|null|null|
+|  2| Spark|   2|3900|
+|  3| HBase|   3|4200|
++---+------+----+----+
+
+scala> val results = sqlContext.sql("""SELECT * FROM course RIGHT JOIN fee ON course.id = fee.id""")
+results: org.apache.spark.sql.DataFrame = [id: int, name: string, id: int, fee: int]
+
+scala> results.show()
++----+-----+---+----+                                                           
+|  id| name| id| fee|
++----+-----+---+----+
+|   2|Spark|  2|3900|
+|   3|HBase|  3|4200|
+|null| null|  4|2900|
++----+-----+---+----+
+
+scala> val results = sqlContext.sql("""SELECT * FROM course LEFT JOIN fee ON course.id = fee.id WHERE fee.id IS NULL""")
+results: org.apache.spark.sql.DataFrame = [id: int, name: string, id: int, fee: int]
+
+scala> results.show()
++---+------+----+----+                                                          
+| id|  name|  id| fee|
++---+------+----+----+
+|  1|Hadoop|null|null|
++---+------+----+----+
+
+scala> val results = sqlContext.sql("""SELECT * FROM course LEFT JOIN fee ON course.id = fee.id WHERE fee.id IS NOT NULL""")
+results: org.apache.spark.sql.DataFrame = [id: int, name: string, id: int, fee: int]
+
+scala> results.show()
++---+-----+---+----+                                                            
+| id| name| id| fee|
++---+-----+---+----+
+|  2|Spark|  2|3900|
+|  3|HBase|  3|4200|
++---+-----+---+----+
+scala> val results = sqlContext.sql("""SELECT * FROM course LEFT JOIN fee ON course.id = fee.id WHERE fee.id IS NOT NULL""")
+results: org.apache.spark.sql.DataFrame = [id: int, name: string, id: int, fee: int]
+
+scala> results.show()
++---+-----+---+----+                                                            
+| id| name| id| fee|
++---+-----+---+----+
+|  2|Spark|  2|3900|
+|  3|HBase|  3|4200|
++---+-----+---+----+
+
