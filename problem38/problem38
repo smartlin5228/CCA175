@@ -1,0 +1,57 @@
+scala> val content = sc.textFile("problem38/file1.txt,problem38/file2.txt,problem38/file3.txt")
+content: org.apache.spark.rdd.RDD[String] = problem38/file1.txt,problem38/file2.txt,problem38/file3.txt MapPartitionsRDD[3] at textFile at <console>:27
+
+scala> val flatContent = con
+concat       concat_ws    content      conv         contribs     concurrent   
+
+scala> val flatContent = cont
+content    contribs   
+
+scala> val flatContent = content.flaMap(word=>word.split(" "))
+<console>:29: error: value flaMap is not a member of org.apache.spark.rdd.RDD[String]
+         val flatContent = content.flaMap(word=>word.split(" "))
+                                   ^
+
+scala> val flatContent = content.flatMap(word=>word.split(" "))
+flatContent: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[4] at flatMap at <console>:29
+
+scala> val trimmedContent = flatContent.map(_.trim)
+trimmedContent: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[5] at map at <console>:31
+
+scala> val removeRDD = sc.parallelize(list("a","the","an", "as", "a","with","this","these","is","are","in", "for","to","and","The","of"))
+<console>:27: error: not found: value list
+Error occurred in an application involving default arguments.
+         val removeRDD = sc.parallelize(list("a","the","an", "as", "a","with","this","these","is","are","in", "for","to","and","The","of"))
+                                        ^
+
+scala> val removeRDD = sc.parallelize(List("a","the","an", "as", "a","with","this","these","is","are","in", "for", "to","and","The","of"))
+removeRDD: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[6] at parallelize at <console>:27
+
+scala> val filteredContent = trim
+trim             trimmedContent   
+
+scala> val filteredContent = trimmedContent.subtract(removeRDD)
+filteredContent: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[10] at subtract at <console>:35
+
+scala> val pairRDD = filteredContent.map(word => (word,1))
+pairRDD: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[11] at map at <console>:37
+
+scala> val wordCount = pairRDD.reduceByKey(_+_)
+wordCount: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[12] at reduceByKey at <console>:39
+
+scala> val swaped = wordCount.map(_.swap)
+swaped: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[13] at map at <console>:41
+scala> val sorted = swaped.sortByKey(false)
+sorted: org.apache.spark.rdd.RDD[(Int, String)] = ShuffledRDD[16] at sortByKey at <console>:43
+scala> sorted.saveAsTextFile("problem38/output")
+                                                                                
+scala> import org.apache.hadoop.io.compress.GzipCodec
+import org.apache.hadoop.io.compress.GzipCodec
+
+scala> sourted.saveAsTextFile("problem38/compressedoutput", classOf[GzipCodec])
+<console>:27: error: not found: value sourted
+              sourted.saveAsTextFile("problem38/compressedoutput", classOf[GzipCodec])
+              ^
+
+scala> sorted.saveAsTextFile("problem38/compressedoutput", classOf[GzipCodec])
+                
