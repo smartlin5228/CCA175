@@ -1,0 +1,30 @@
+scala> val employee = sqlContext.read.json("problem35/employee.json")
+employee: org.apache.spark.sql.DataFrame = [first_name: string, last_name: string]
+
+scala> employee.collect
+res2: Array[org.apache.spark.sql.Row] = Array([Ankit,Jain], [Amir,Khan], [Rajesh,Khanna], [Priynka,Chopra], [Kareena,Kapoor], [Lokesh,Yadav])
+
+scala> employee.write.parquet("problem35/employee.parquet")
+                                                                                
+scala> val parq_data = sqlContext.read.parquet("problem35/employee.parquet")
+parq_data: org.apache.spark.sql.DataFrame = [first_name: string, last_name: string]
+
+scala> parq_data.registerTempTable("employee")
+
+scala> val allemployee = sqlContext.sql("""SELECT * FROM employee""")
+allemployee: org.apache.spark.sql.DataFrame = [first_name: string, last_name: string]
+
+scala> allemployee.show
++----------+---------+
+|first_name|last_name|
++----------+---------+
+|     Ankit|     Jain|
+|      Amir|     Khan|
+|    Rajesh|   Khanna|
+|   Priynka|   Chopra|
+|   Kareena|   Kapoor|
+|    Lokesh|    Yadav|
++----------+---------+
+
+scala> allemployee.write.json("problem35/employees.json")
+         

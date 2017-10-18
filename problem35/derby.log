@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Tue Oct 17 22:58:30 PDT 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-015f-2e0f-d460-000028746950 
+on database directory /tmp/spark-01c46e46-e5a5-4f92-8234-574b530ef3df/metastore with class loader sun.misc.Launcher$AppClassLoader@21a722ef 
+Loaded from file:/usr/lib/hive/lib/derby-10.11.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_67-b01
+user.dir=/home/cloudera/workspace/cloudera_certification/CCA175/itversity/CCA175/problem35
+os.name=Linux
+os.arch=amd64
+os.version=2.6.32-573.el6.x86_64
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
