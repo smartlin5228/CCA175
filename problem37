@@ -1,0 +1,2 @@
+sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments --hive-home /user/hive/warehouse -hive-import -hive-overwrite --hive-table departments_hive --fields-terminated-by '\001'
+
