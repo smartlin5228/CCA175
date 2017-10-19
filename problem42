@@ -1,0 +1,21 @@
+scala> val a = sc.parallelize(List("dog", "tiger", "lion", "cat", "spider", "eagle"), 2)
+a: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[20] at parallelize at <console>:27
+
+scala> val b = a.keyBy(_.length)
+b: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[21] at keyBy at <console>:29
+
+scala> val c = sc.parallelize(List("ant", "falcon", "squid"), 2) 
+c: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[22] at parallelize at <console>:27
+
+scala> val d = c.keyBy(_.length)
+d: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[23] at keyBy at <console>:29
+
+Write a correct code snippet for operationl which will produce desired output, shown below.
+Array[(lnt, String)] = Array((4,lion))
+
+scala> b.subtract(d).collect
+res9: Array[(Int, String)] = Array((6,spider), (5,eagle), (3,cat), (3,dog), (5,tiger), (4,lion))
+
+scala> b.subtractByKey(d).collect
+res10: Array[(Int, String)] = Array((4,lion))
+
