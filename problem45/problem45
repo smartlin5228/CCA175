@@ -1,0 +1,30 @@
+scala> val content = sc.textFile("problem45/Content.txt")
+content: org.apache.spark.rdd.RDD[String] = problem45/Content.txt MapPartitionsRDD[1] at textFile at <console>:27
+
+scala> val nonempty = content.filter(_.length > 0)
+nonempty: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[2] at filter at <console>:29
+
+scala> val words = nonempty.map(_.split(" "))
+words: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[3] at map at <console>:31
+
+scala> val pairs = words.map(word => (word,1))
+pairs: org.apache.spark.rdd.RDD[(Array[String], Int)] = MapPartitionsRDD[4] at map at <console>:33
+
+scala> val words = nonempty.flatMap(_.split(" "))
+words: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[5] at flatMap at <console>:31
+
+scala> words.collect
+res1: Array[String] = Array(Hello, this, is, ABCTECH.com, This, is, XYZTECH.com, Apache, Spark, Training, This, is, Spark, Learning, Session, Spark, is, faster, than, MapReduce)
+
+scala> val pairs = words.map(word => (word,1))
+pairs: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[6] at map at <console>:33
+
+scala> val stat = pairs.reduceByKey(_+_)
+stat: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[7] at reduceByKey at <console>:35
+scala> val result = stat.map(_.swap).sortByKey(false).map(_.swap)
+result: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[13] at map at <console>:37
+
+scala> result.collect
+res5: Array[(String, Int)] = Array((is,4), (Spark,3), (This,2), (this,1), (XYZTECH.com,1), (Hello,1), (Apache,1), (MapReduce,1), (Session,1), (Training,1), (Learning,1), (faster,1), (than,1), (ABCTECH.com,1))
+scala> result.saveAsTextFile("problem45/result")
+
