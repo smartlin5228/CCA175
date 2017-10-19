@@ -1,0 +1,12 @@
+scala> val aul = sc.parallelize(List (("a" , Array(1,2)), ("b" , Array(1,2))))
+aul: org.apache.spark.rdd.RDD[(String, Array[Int])] = ParallelCollectionRDD[15] at parallelize at <console>:27
+
+scala> val au2 = sc.parallelize(List (("a" , Array(3)), ("b" , Array(2))))
+au2: org.apache.spark.rdd.RDD[(String, Array[Int])] = ParallelCollectionRDD[16] at parallelize at <console>:27
+
+Apply the Spark method, which will generate below output.
+Array[(String, Array[lnt])] = Array((a,Array(1, 2)), (b,Array(1, 2)), (a(Array(3)), (b,Array(2)))
+
+scala> aul.union(au2).collect
+res7: Array[(String, Array[Int])] = Array((a,Array(1, 2)), (b,Array(1, 2)), (a,Array(3)), (b,Array(2)))
+
