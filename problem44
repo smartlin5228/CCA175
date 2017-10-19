@@ -1,0 +1,5 @@
+[cloudera@quickstart CCA175]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments --target-dir departments
+
+17/10/18 23:11:31 INFO tool.ImportTool: No new rows detected since last import.
+[cloudera@quickstart CCA175]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments --target-dir departments -append -check-column "department_id" -incremental append -last-value 1000
+
