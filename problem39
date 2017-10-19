@@ -19,3 +19,28 @@ Step 8 : Now sort the data in each category based on price in descending order.
 # sorted is a function to sort an iterable, we can also specify, what would be the Key on which we want to sort in this case we have price which it needs to be sorted.
 on groupByCategroyld.map(lambda tuple: sorted(tuple[1], key=lambda tupleValue:
 tupleValue[2] , reverse=True)).take(5)
+
+
+
+
+
+
+// Scala Solution
+scala> case class Products(product_id:Integer, product_category_id:Integer, product_description:String, product_price:Float, product_image:String)
+defined class Products
+
+scala> val products = sc.textFile("p93_products").map(_.split(",")).map(line => (line(0), line(1), line(2), line(3), line(4), line(5)))
+products: org.apache.spark.rdd.RDD[(String, String, String, String, String, String)] = MapPartitionsRDD[5] at map at <console>:27
+
+scala> val groupedProducts = products.keyBy(p =>p._1).groupByKey()
+groupedProducts: org.apache.spark.rdd.RDD[(String, Iterable[(String, String, String, String, String, String)])] = ShuffledRDD[8] at groupByKey at <console>:29
+
+scala> groupedProducts.take(5)
+[Stage 0:>                                                          (0 + 0) / 2]17/10/18 18:51:06 WARN cluster.YarnScheduler: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+res3: Array[(String, Iterable[(String, String, String, String, String, String)])] = Array((273,CompactBuffer((273,13,Under Armour Kids' Mercenary Slide,,27.99,http://images.acmesports.sports/Under+Armour+Kids%27+Mercenary+Slide))), (253,CompactBuffer((253,12,Nike Women's Free 5.0+ Running Shoe,,99.99,http://images.acmesports.sports/Nike+Women%27s+Free+5.0%2B+Running+Shoe))), (1148,CompactBuffer((1148,51,Team Golf Pittsburgh Steelers Fairway Stand B,,179.99,http://images.acmesports.sports/Team+Golf+Pittsburgh+Steelers+Fairway+Stand+Bag))), (1119,CompactBuffer((1119,50,Majestic Men's 2014 All-Star Game Yadier Moli,,130.0,http://images.acmesports.sports/Majestic+Men%27s+2014+All-Star+Game+Yadier+Molina+%234+National...))), (282,CompactBuffer((282,13,Under Armour Women's Ignite PIP VI Slide...
+scala> 
+
+scala> val listproducts = groupedProducts.mapValues(iter => iter.toList.sortBy(p => p._4))
+listproducts: org.apache.spark.rdd.RDD[(String, List[(String, String, String, String, String, String)])] = MapPartitionsRDD[10] at mapValues at <console>:31
+
+
