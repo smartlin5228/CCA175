@@ -1,0 +1,39 @@
+scala> val createScoreCombiner = (score: Double) => (1, score)
+createScoreCombiner: Double => (Int, Double) = <function1>
+
+scala> type ScoreCollector = (Int, Double)
+defined type alias ScoreCollector
+
+scala> type PersonScores = (String, (Int, Double))
+scala> val initialScores = Array(("Fred", 88.0), ("Fred", 95.0), ("Fred", 91.0), ("Wilma", 93.0),
+     | ("Wilma", 95.0), ("Wilma", 98.0))
+initialScores: Array[(String, Double)] = Array((Fred,88.0), (Fred,95.0), (Fred,91.0), (Wilma,93.0), (Wilma,95.0), (Wilma,98.0))
+
+scala> val wilmaAndFredScores = sc.parallelize(initialScores).cache()
+wilmaAndFredScores: org.apache.spark.rdd.RDD[(String, Double)] = ParallelCollectionRDD[0] at parallelize at <console>:29
+
+scala> val scoreCombiner = (collector: ScoreCollector, score: Double) => {
+     |          val (numberScores, totalScore) = collector
+     |         (numberScores + 1, totalScore + score)
+     |       }
+scoreCombiner: ((Int, Double), Double) => (Int, Double) = <function2>
+
+
+scala> val scoreMerger = (collector1: ScoreCollector, collector2: ScoreCollector) => {
+     |       val (numScores1, totalScore1) = collector1
+     |       val (numScores2, totalScore2) = collector2
+     |       (numScores1 + numScores2, totalScore1 + totalScore2)
+     |     }
+scoreMerger: ((Int, Double), (Int, Double)) => (Int, Double) = <function2>
+
+scala> val scores = wilmaAndFredScores.combineByKey(createScoreCombiner, scoreCombiner, scoreMerger)
+scores: org.apache.spark.rdd.RDD[(String, (Int, Double))] = ShuffledRDD[1] at combineByKey at <console>:43
+
+scala> val averagingFunction = (personScore: PersonScores) => {
+     |        val (name, (numberScores, totalScore)) = personScore
+     |        (name, totalScore / numberScores)
+     |     }
+averagingFunction: ((String, (Int, Double))) => (String, Double) = <function1>
+
+scala> val averageScores = scores.collectAsMap().map(averagingFunction)
+averageScores: scala.collection.Map[String,Double] = Map(Fred -> 91.33333333333333, Wilma -> 95.33333333333333
