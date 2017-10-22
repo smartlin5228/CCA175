@@ -1,0 +1,40 @@
+You have been given 2 files , with the content as given Below
+(spark12/technology.txt)
+(spark12/salary.txt)
+(spark12/technology.txt)
+first,last,technology
+Amit,Jain,java
+Lokesh,kumar,unix
+Mithun,kale,spark
+Rajni,vekat,hadoop
+Rahul,Yadav,scala
+(spark12/salary.txt)
+first,last,salary
+Amit,Jain,100000
+Lokesh,kumar,95000
+Mithun,kale,150000
+Rajni,vekat,154000
+Rahul,Yadav,120000
+
+Write a Spark program, which will join the data based on first and last name and save the joined results in following format, first Last.technology.salary
+
+
+scala> val salary = sc.textFile("problem54/salary.txt")
+salary: org.apache.spark.rdd.RDD[String] = problem54/salary.txt MapPartitionsRDD[6] at textFile at <console>:27
+
+scala> val technology = sc.textFile("problem54/technology.txt")
+technology: org.apache.spark.rdd.RDD[String] = problem54/technology.txt MapPartitionsRDD[8] at textFile at <console>:27
+
+
+scala> val salary = sc.textFile("problem54/salary.txt").map(_.split(","))
+salary: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[11] at map at <console>:27
+
+scala> val technology = sc.textFile("problem54/technology.txt").map(_.split(","))
+technology: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[14] at map at <console>:27
+
+scala> val result = technology.map(t => ((t(0), t(1)), t(2))).join(salary.map(s => ((s(0), s(1)), s(2))))
+result: org.apache.spark.rdd.RDD[((String, String), (String, String))] = MapPartitionsRDD[19] at join at <console>:31
+scala> result.collect
+res2: Array[((String, String), (String, String))] = Array(((Rahul,Yadav),(scala,120000)), ((Mithun,kale),(spark,150000)), ((Amit,Jain),(java,100000)), ((first,last),(technology,salary)), ((Rajni,vekat),(hadoop,154000)), ((Lokesh,kumar),(unix,95000)))
+
+
