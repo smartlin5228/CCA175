@@ -1,0 +1,21 @@
+You have been given below code snippet.
+val a = sc.parallelize(List("dogM, "tiger", "lion", "cat", "panther", "eagle"), 2) val b = a.map(x => (x.length, x)) operation1
+Write a correct code snippet for operationl which will produce desired output, shown below.
+Array[(lnt, String)] = Array((3,xdogx), (5,xtigerx), (4,xlionx), (3,xcatx), (7,xpantherx),
+(5,xeaglex))
+
+
+scala> val a = sc.parallelize(List("dog", "tiger", "lion", "cat", "panther", "eagle"), 2)
+a: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[0] at parallelize at <console>:27
+
+scala> val b = a.map(x => (x.length, x))
+b: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[1] at map at <console>:29
+
+scala> b.collect
+res0: Array[(Int, String)] = Array((3,dog), (5,tiger), (4,lion), (3,cat), (7,panther), (5,eagle))
+
+
+
+scala> b.mapValues("x" + _ + "x").collect
+res1: Array[(Int, String)] = Array((3,xdogx), (5,xtigerx), (4,xlionx), (3,xcatx), (7,xpantherx), (5,xeaglex))
+
