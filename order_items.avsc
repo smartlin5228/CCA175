@@ -1,0 +1,43 @@
+{
+  "type" : "record",
+  "name" : "order_items",
+  "doc" : "Sqoop import of order_items",
+  "fields" : [ {
+    "name" : "order_item_id",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "order_item_id",
+    "sqlType" : "4"
+  }, {
+    "name" : "order_item_order_id",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "order_item_order_id",
+    "sqlType" : "4"
+  }, {
+    "name" : "order_item_product_id",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "order_item_product_id",
+    "sqlType" : "4"
+  }, {
+    "name" : "order_item_quantity",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "order_item_quantity",
+    "sqlType" : "-6"
+  }, {
+    "name" : "order_item_subtotal",
+    "type" : [ "null", "float" ],
+    "default" : null,
+    "columnName" : "order_item_subtotal",
+    "sqlType" : "7"
+  }, {
+    "name" : "order_item_product_price",
+    "type" : [ "null", "float" ],
+    "default" : null,
+    "columnName" : "order_item_product_price",
+    "sqlType" : "7"
+  } ],
+  "tableName" : "order_items"
+}

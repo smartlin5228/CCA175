@@ -1,0 +1,25 @@
+{
+  "type" : "record",
+  "name" : "categories",
+  "doc" : "Sqoop import of categories",
+  "fields" : [ {
+    "name" : "category_id",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "category_id",
+    "sqlType" : "4"
+  }, {
+    "name" : "category_department_id",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "category_department_id",
+    "sqlType" : "4"
+  }, {
+    "name" : "category_name",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "category_name",
+    "sqlType" : "12"
+  } ],
+  "tableName" : "categories"
+}

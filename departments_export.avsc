@@ -1,0 +1,25 @@
+{
+  "type" : "record",
+  "name" : "departments_export",
+  "doc" : "Sqoop import of departments_export",
+  "fields" : [ {
+    "name" : "department_id",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "department_id",
+    "sqlType" : "4"
+  }, {
+    "name" : "department_name",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "department_name",
+    "sqlType" : "12"
+  }, {
+    "name" : "created_date",
+    "type" : [ "null", "long" ],
+    "default" : null,
+    "columnName" : "created_date",
+    "sqlType" : "93"
+  } ],
+  "tableName" : "departments_export"
+}

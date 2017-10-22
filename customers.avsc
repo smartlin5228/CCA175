@@ -1,0 +1,61 @@
+{
+  "type" : "record",
+  "name" : "customers",
+  "doc" : "Sqoop import of customers",
+  "fields" : [ {
+    "name" : "customer_id",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "customer_id",
+    "sqlType" : "4"
+  }, {
+    "name" : "customer_fname",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "customer_fname",
+    "sqlType" : "12"
+  }, {
+    "name" : "customer_lname",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "customer_lname",
+    "sqlType" : "12"
+  }, {
+    "name" : "customer_email",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "customer_email",
+    "sqlType" : "12"
+  }, {
+    "name" : "customer_password",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "customer_password",
+    "sqlType" : "12"
+  }, {
+    "name" : "customer_street",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "customer_street",
+    "sqlType" : "12"
+  }, {
+    "name" : "customer_city",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "customer_city",
+    "sqlType" : "12"
+  }, {
+    "name" : "customer_state",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "customer_state",
+    "sqlType" : "12"
+  }, {
+    "name" : "customer_zipcode",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "customer_zipcode",
+    "sqlType" : "12"
+  } ],
+  "tableName" : "customers"
+}

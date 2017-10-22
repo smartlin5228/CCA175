@@ -1,0 +1,50 @@
+
+You have been given following mysql database details.
+user=retail_dba
+password=cloudera
+database=retail_db
+jdbc URL = jdbc:mysql://quickstart:3306/retail_db
+Please accomplish following activities.
+
+# -  List all the tables using sqoop command from retail_db
+[cloudera@quickstart CCA175]$ sqoop list-tables --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera
+Warning: /usr/lib/sqoop/../accumulo does not exist! Accumulo imports will fail.
+Please set $ACCUMULO_HOME to the root of your Accumulo installation.
+17/10/21 17:14:07 INFO sqoop.Sqoop: Running Sqoop version: 1.4.6-cdh5.10.0
+17/10/21 17:14:07 WARN tool.BaseSqoopTool: Setting your password on the command-line is insecure. Consider using -P instead.
+17/10/21 17:14:08 INFO manager.MySQLManager: Preparing to use a MySQL streaming resultset.
+categories
+customers
+customers_exports
+department_hive01
+departments
+departments_export
+order_items
+orders
+orders_exports
+products
+
+# - Write simple sqoop eval command to check whether you have permission to read database tables or not.
+[cloudera@quickstart CCA175]$ sqoop eval --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --query "select count(1) from order_items"
+Warning: /usr/lib/sqoop/../accumulo does not exist! Accumulo imports will fail.
+Please set $ACCUMULO_HOME to the root of your Accumulo installation.
+17/10/21 17:15:34 INFO sqoop.Sqoop: Running Sqoop version: 1.4.6-cdh5.10.0
+17/10/21 17:15:34 WARN tool.BaseSqoopTool: Setting your password on the command-line is insecure. Consider using -P instead.
+17/10/21 17:15:34 INFO manager.MySQLManager: Preparing to use a MySQL streaming resultset.
+------------------------
+| count(1)             | 
+------------------------
+| 172198               | 
+------------------------
+
+# -  Import all the tables as avro files in /user/hive/warehouse/retail cca174.db
+sqoop import-all-tables --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera -as-avrodatafile -warehouse-dir=/user/hive/warehouse/retail -m 1
+
+ Transferred 171.5596 KB in 20.8859 seconds (8.2141 KB/sec)
+17/10/21 17:21:15 INFO mapreduce.ImportJobBase: Retrieved 1345 records.
+
+
+# - Import departments table as a text file in /user/cloudera/departments.
+
+sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments -as-textfile -target-dir=/user/cloudera/departments
+

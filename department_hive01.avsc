@@ -1,0 +1,25 @@
+{
+  "type" : "record",
+  "name" : "department_hive01",
+  "doc" : "Sqoop import of department_hive01",
+  "fields" : [ {
+    "name" : "id",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "id",
+    "sqlType" : "4"
+  }, {
+    "name" : "department_name",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "department_name",
+    "sqlType" : "12"
+  }, {
+    "name" : "avg_salary",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "avg_salary",
+    "sqlType" : "4"
+  } ],
+  "tableName" : "department_hive01"
+}
