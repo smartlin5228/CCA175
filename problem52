@@ -1,0 +1,28 @@
+Please accomplish the following exercises using HDFS command line options.
+1. Create a directory in hdfs named hdfs_commands.
+
+[cloudera@quickstart CCA175]$ hdfs dfs -mkdir hdfs_commands
+
+
+2. Create a file in hdfs named data.txt in hdfs_commands.
+
+[cloudera@quickstart CCA175]$ hdfs dfs -touch hdfs_commands/data.txt
+-touch: Unknown command
+[cloudera@quickstart CCA175]$ hdfs dfs -touchz hdfs_commands/data.txt
+
+
+3. Now copy this data.txt file on local filesystem, however while copying file please make sure file properties are not changed e.g. file permissions.
+
+[cloudera@quickstart CCA175]$ hdfs dfs -copyToLocal -p hdfs_commands/data.txt /home/cloudera/Desktop/HadoopExam/
+
+
+4. Now create a file in local directory named data_local.txt and move this file to hdfs in hdfs_commands directory.
+
+[cloudera@quickstart CCA175]$ hdfs dfs -copyFromLocal -p /home/cloudera/Desktop/HadoopExam/data_local.txt hdfs_commands
+
+
+5. Create a file data_hdfs.txt in hdfs_commands directory and copy it to local file system.
+
+
+
+6. Create a file in local filesystem named file1.txt and put it to hdfs
