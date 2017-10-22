@@ -1,0 +1,23 @@
+cala> val a = sc.parallelize(1 to 10, 3)
+a: org.apache.spark.rdd.RDD[Int] = ParallelCollectionRDD[0] at parallelize at <console>:27
+
+scala> val b = a.filter(_ % 2 = 0)
+<console>:29: error: ambiguous reference to overloaded definition,
+both method % in class Int of type (x: Char)Int
+and  method % in class Int of type (x: Short)Int
+match expected type ?
+         val b = a.filter(_ % 2 = 0)
+                            ^
+
+scala> val b = a.filter(_ % 2 == 0)
+b: org.apache.spark.rdd.RDD[Int] = MapPartitionsRDD[1] at filter at <console>:29
+
+scala> val c = a.filter(_ < 4)
+c: org.apache.spark.rdd.RDD[Int] = MapPartitionsRDD[2] at filter at <console>:29
+
+scala> c.collect
+res1: Array[Int] = Array(1, 2, 3)   
+
+scala> b.collect
+res2: Array[Int] = Array(2, 4, 6, 8, 10)
+
