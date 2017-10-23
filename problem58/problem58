@@ -1,0 +1,42 @@
+cala> val name = sc.textFile("problem58/EmployeeName.csv")
+name: org.apache.spark.rdd.RDD[String] = problem58/EmployeeName.csv MapPartitionsRDD[1] at textFile at <console>:27
+
+scala> val namePDD = name.map(_.split(","))
+namePDD: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[2] at map at <console>:29
+
+scala> namePDD.collect
+res1: Array[Array[String]] = Array(Array(E01, Lokesh), Array(E02, Bhupesh), Array(E03, Amit), Array(E04, Ratan), Array(E05, Dinesh), Array(E06, Pavan), Array(E07, Tejas), Array(E08, Sheela), Array(E09, Kumar), Array(E10, Venkat))
+
+scala> val namePDD = name.map(_.split(",")).map(x => (x(0), x(1)))
+namePDD: org.apache.spark.rdd.RDD[(String, String)] = MapPartitionsRDD[4] at map at <console>:29
+
+scala> val salaryRDD = salary.map(_.split(",")).map(s => (s(0), s(1)))
+salaryRDD: org.apache.spark.rdd.RDD[(String, String)] = MapPartitionsRDD[8] at map at <console>:29
+
+scala> salaryRDD.collect
+res3: Array[(String, String)] = Array((E01,50000), (E02,50000), (E03,45000), (E04,45000), (E05,50000), (E06,45000), (E07,50000), (E08,10000), (E09,10000), (E10,10000))
+
+scala> val joinedData = namePDD.join(salaryRDD)
+joinedData: org.apache.spark.rdd.RDD[(String, (String, String))] = MapPartitionsRDD[11] at join at <console>:35
+
+scala> joinedData.collect
+res5: Array[(String, (String, String))] = Array((E09,(Kumar,10000)), (E03,(Amit,45000)), (E07,(Tejas,50000)), (E05,(Dinesh,50000)), (E10,(Venkat,10000)), (E01,(Lokesh,50000)), (E06,(Pavan,45000)), (E02,(Bhupesh,50000)), (E08,(Sheela,10000)), (E04,(Ratan,45000)))
+
+scala> val removedKey = joinedData.values
+removedKey: org.apache.spark.rdd.RDD[(String, String)] = MapPartitionsRDD[12] at values at <console>:37
+scala> val salaryFirst = removedKey.map(_.swap)
+salaryFirst: org.apache.spark.rdd.RDD[(String, String)] = MapPartitionsRDD[13] at map at <console>:39
+scala> val result = salaryFirst.groupByKey()
+result: org.apache.spark.rdd.RDD[(String, Iterable[String])] = ShuffledRDD[14] at groupByKey at <console>:41
+
+scala> result.collect
+res7: Array[(String, Iterable[String])] = Array((45000,CompactBuffer(Amit, Pavan, Ratan)), (10000,CompactBuffer(Kumar, Venkat, Sheela)), (50000,CompactBuffer(Tejas, Dinesh, Lokesh, Bhupesh)))
+
+scala> val grpByKey = salaryFirst.groupByKey().collect()
+grpByKey: Array[(String, Iterable[String])] = Array((45000,CompactBuffer(Amit, Pavan, Ratan)), (10000,CompactBuffer(Kumar, Venkat, Sheela)), (50000,CompactBuffer(Tejas, Dinesh, Lokesh, Bhupesh)))
+
+scala> val rddByKey = grpByKey.map{case (k,v) => k->sc.makeRDD(v.toSeq)}
+rddByKey: Array[(String, org.apache.spark.rdd.RDD[String])] = Array((45000,ParallelCollectionRDD[16] at makeRDD at <console>:43), (10000,ParallelCollectionRDD[17] at makeRDD at <console>:43), (50000,ParallelCollectionRDD[18] at makeRDD at <console>:43))
+
+scala> rddByKey.foreach{case (k,rdd) => rdd.saveAsTextFile("problem58/Employee"+k)}
+  
