@@ -1,0 +1,26 @@
+
+scala> val a =  sc.parallelize(List("dog", "tiger", "lion", "cat", "panther", "eagle"), 2)
+a: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[0] at parallelize at <console>:27
+
+scala> val b = a.map(x => (x.length, x))
+b: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[1] at map at <console>:29
+
+scala> b.collect
+res0: Array[(Int, String)] = Array((3,dog), (5,tiger), (4,lion), (3,cat), (7,panther), (5,eagle))
+
+scala> b.reduceByKey(_++)
+<console>:32: error: missing parameter type for expanded function ((x$1) => x$1.$plus$plus)
+              b.reduceByKey(_++)
+                            ^
+
+scala> b.reduceByKey(_+_)
+res2: org.apache.spark.rdd.RDD[(Int, String)] = ShuffledRDD[2] at reduceByKey at <console>:32
+
+scala> b.reduceByKey(_+_).collec
+<console>:32: error: value collec is not a member of org.apache.spark.rdd.RDD[(Int, String)]
+              b.reduceByKey(_+_).collec
+                                 ^
+
+scala> b.reduceByKey(_+_).collect
+res4: Array[(Int, String)] = Array((4,lion), (3,dogcat), (7,panther), (5,tigereagle))
+
