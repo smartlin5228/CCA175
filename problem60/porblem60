@@ -1,0 +1,17 @@
+cala> val csv = sc.textFile("user.csv")
+csv: org.apache.spark.rdd.RDD[String] = user.csv MapPartitionsRDD[28] at textFile at <console>:27
+
+scala> val headerAndRows = csv.map(line => line.split(",").map(_.trim))
+headerAndRows: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[29] at map at <console>:29
+scala> val header = headerAndRows.first()
+header: Array[String] = Array(id, topic, hits)
+scala> val content = headerAndRows.filter(line => line != header)
+content: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[30] at filter at <console>:33
+scala> val maps = content.map(splits => header.zip(splits).toMap)
+maps: org.apache.spark.rdd.RDD[scala.collection.immutable.Map[String,String]] = MapPartitionsRDD[31] at map at <console>:35
+
+scala> maps.collect
+res14: Array[scala.collection.immutable.Map[String,String]] = Array(Map(id -> id, topic -> topic, hits -> hits), Map(id -> Rahul, topic -> scala, hits -> 120), Map(id -> Nikita, topic -> spark, hits -> 80), Map(id -> Mithun, topic -> spark, hits -> 1), Map(id -> myself, topic -> cca175, hits -> 180))
+
+
+val result = maps.filter(map => map("id") != "myself")
