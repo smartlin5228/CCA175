@@ -1,0 +1,9 @@
+scala> val pairRDDI = sc.parallelize(List( ("cat",2), ("cat", 5), ("book", 4),("cat", 12)))
+pairRDDI: org.apache.spark.rdd.RDD[(String, Int)] = ParallelCollectionRDD[22] at parallelize at <console>:27
+
+scala> val pairRDD2 = sc.parallelize(List( ("cat",2), ("cup", 5), ("mouse", 4),("cat", 12)))
+pairRDD2: org.apache.spark.rdd.RDD[(String, Int)] = ParallelCollectionRDD[23] at parallelize at <console>:27
+
+scala> pairRDDI.fullOuterJoin(pairRDD2).collect
+res13: Array[(String, (Option[Int], Option[Int]))] = Array((cup,(None,Some(5))), (cat,(Some(2),Some(2))), (cat,(Some(2),Some(12))), (cat,(Some(5),Some(2))), (cat,(Some(5),Some(12))), (cat,(Some(12),Some(2))), (cat,(Some(12),Some(12))), (book,(Some(4),None)), (mouse,(None,Some(4))))
+
