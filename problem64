@@ -1,0 +1,22 @@
+ You have been given MySQL DB with following details.
+user=retail_dba
+password=cloudera
+database=retail_db
+table=retail_db.orders
+table=retail_db.order_items
+jdbc URL = jdbc:mysql://quickstart:3306/retail_db
+Columns of order table : (orderjd , order_date , ordercustomerid, order status}
+Columns of orderjtems table : (order_item_td , order_item_order_id ,
+order_item_product_id,
+order_item_quantity,order_item_subtotal,order_item_product_price)
+Please accomplish following activities.
+1. Copy "retaildb.orders" and "retaildb.orderjtems" table to hdfs in respective directory p89_orders and p89_order_items .
+
+[cloudera@quickstart ~]$  sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera -table=orders --target-dir=p89_orders  -m 1
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db -username=retail_dba --password=cloudera -table=order_items -target-dir=p89_order_items -m 1
+
+
+2. Join these data using orderid in Spark and Python
+3. Now fetch selected columns from joined data Orderld, Order date and amount collected on this order.
+4. Calculate total order placed for each date, and produced the output sorted by date.
