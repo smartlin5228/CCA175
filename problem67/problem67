@@ -1,0 +1,43 @@
+scala> val file1 = sc.textFile("problem67/file1.txt")
+file1: org.apache.spark.rdd.RDD[String] = problem67/file1.txt MapPartitionsRDD[1] at textFile at <console>:27
+
+scala> val file2 = sc.textFile("problem67/file2.txt")
+file2: org.apache.spark.rdd.RDD[String] = problem67/file2.txt MapPartitionsRDD[3] at textFile at <console>:27
+
+scala> val file3 = sc.textFile("problem67/file3.txt")
+file3: org.apache.spark.rdd.RDD[String] = problem67/file3.txt MapPartitionsRDD[5] at textFile at <console>:27
+
+scala> val file4 = sc.textFile("problem67/file4.txt")
+file4: org.apache.spark.rdd.RDD[String] = problem67/file4.txt MapPartitionsRDD[7] at textFile at <console>:27
+
+scala> val file1WC = file1.flatMap(_.split(" ")).map(word => (word, 1)).reduceByKey(_+_).map(_.swap).sortByKey(false).map(_.swap)
+file1WC: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[19] at map at <console>:29
+
+scala> val file2WC = file2.flatMap(_.split(" ")).map(word => (word, 1)).reduceByKey(_+_).map(_.swap).sortByKey(false).map(_.swap)
+file2WC: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[27] at map at <console>:29
+
+scala> val file3WC = file3.flatMap(_.split(" ")).map(word => (word, 1)).reduceByKey(_+_).map(_.swap).sortByKey(false).map(_.swap)
+file3WC: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[35] at map at <console>:29
+
+scala> val file4WC = file4.flatMap(_.split(" ")).map(word => (word, 1)).reduceByKey(_+_).map(_.swap).sortByKey(false).map(_.swap)
+file4WC: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[43] at map at <console>:29
+
+scala> val file1word = file1WC.map( line =>Array(file1.name + "->" + line._1 + "-" + line._2))
+file1word: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[53] at map at <console>:31
+
+scala> file1word.first
+res5: Array[String] = Array(null->are-2)
+
+scala> val file2word = file2WC.map( line => Array(file2.name + "->" + line._1 + "-" + line._2))
+file2word: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[54] at map at <console>:31
+
+scala> val file3word = file3WC.map( line => Array(file3.name + "->" + line._1 + "-" + line._2))
+file3word: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[55] at map at <console>:31
+
+
+scala> val file4word = file4WC.map( line => Array(file4.name + "->" + line._1 + "-" + line._2))
+file4word: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[56] at map at <console>:31
+scala> val result = file1word.union(file2word).union(file3word).union(file4word) 
+result: org.apache.spark.rdd.RDD[Array[String]] = UnionRDD[59] at union at <console>:51
+scala> result.repartition(1).saveAsTextFile("problem67/result")
+

@@ -1,0 +1,2 @@
+Apache Storm is focused on stream processing or what some call complex event processing. Storm implements a fault tolerant method for performing a computation or pipelining multiple computations on an event as it flows into a system. One might use
+Storm to transform unstructured data as it flows into a system into a desired format
