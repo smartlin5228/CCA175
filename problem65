@@ -1,0 +1,18 @@
+Problem Scenario 72 : You have been given a table named "employee2" with following detail.
+first_name string
+last_name string
+Write a spark script in python which read this table and print all the rows and individual column values.
+
+A. See the explanation for Step by Step Solution and configuration.
+
+
+Correct Answer: A
+
+Explanation:
+Solution :
+Step 1 : Import statements for HiveContext from pyspark.sql import HiveContext
+Step 2 : Create sqIContext sqIContext = HiveContext(sc)
+Step 3 : Query hive
+employee2 = sqlContext.sql("select' from employee2")
+Step 4 : Now prints the data for row in employee2.collect(): print(row)
+Step 5 : Print specific column for row in employee2.collect(): print( row.first_name)
