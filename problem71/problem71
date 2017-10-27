@@ -1,0 +1,51 @@
+You have been given below three files
+Now accomplish all the queries given in solution.
+Select product, its price , its supplier name where product price is less than 0.6 using SparkSQL
+
+
+scala> val product = sc.textFile("problem71/product.csv")
+product: org.apache.spark.rdd.RDD[String] = problem71/product.csv MapPartitionsRDD[3] at textFile at <console>:27
+
+scala> val supplier = sc.textFile("problem71/supplier.csv")
+supplier: org.apache.spark.rdd.RDD[String] = problem71/supplier.csv MapPartitionsRDD[5] at textFile at <console>:27
+
+scala> val prdsup = sc.textFile("problem71/products_suppliers.csv")
+prdsup: org.apache.spark.rdd.RDD[String] = problem71/products_suppliers.csv MapPartitionsRDD[7] at textFile at <console>:27
+
+scala> case class Product(productID: Integer, productCode: String, name: String, price: Float, supplierID: Integer)
+defined class Product
+
+scala> case class Supplier(supplierID: Integer, name: String, phone: Integer)
+defined class Supplier
+
+scala> case class PrdSup(productID: Integer, supplierID: Integer)
+defined class PrdSup
+
+scala> val productRDD = product.map(_.split(",")).map(p => Product(p(0).toInt, p(1), p(2), p(3).toFloat, p(4).toInt))
+productRDD: org.apache.spark.rdd.RDD[Product] = MapPartitionsRDD[9] at map at <console>:31
+
+scala> val supplierRDD = supplier.map(_.split(",")).map(s => Supplier(s(0).toInt, s(1), s(2).toInt))
+supplierRDD: org.apache.spark.rdd.RDD[Supplier] = MapPartitionsRDD[11] at map at <console>:31
+
+scala> val prdsupRDD = prdsup.map(_.split(",")).map(ps => PrdSup(ps(0).toInt, ps(1).toInt))
+prdsupRDD: org.apache.spark.rdd.RDD[PrdSup] = MapPartitionsRDD[13] at map at <console>:31
+
+
+scala> val prdDF = productRDD.toDF()
+prdDF: org.apache.spark.sql.DataFrame = [productID: int, productCode: string, name: string, price: float, supplierID: int]
+
+scala> val supDF = supplierRDD.toDF()
+supDF: org.apache.spark.sql.DataFrame = [supplierID: int, name: string, phone: int]
+
+scala> val prdsupDF = prdsupRDD.toDF()
+prdsupDF: org.apache.spark.sql.DataFrame = [productID: int, supplierID: int]
+
+scala> prdDF.registerTempTable("product")
+
+scala> supDF.registerTempTable("supplier")
+
+scala> prdsupDF.registerTempTable("product_supplier")
+
+scala> val result = sqlContext.sql("""SELECT product.name, price, supplier.name FROM product JOIN supplier ON product.supplierID = supplier.supplierID WHERE price < 0.6""")
+result: org.apache.spark.sql.DataFrame = [name: string, price: float, name: string]
+
