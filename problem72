@@ -1,0 +1,31 @@
+1. Import departments table from mysql to hdfs as textfile in departments_text directory.
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments -as-textfile -target-dir=departments_text
+
+17/10/27 14:18:26 INFO mapreduce.ImportJobBase: Transferred 141 bytes in 28.9377 seconds (4.8725 bytes/sec)
+17/10/27 14:18:26 INFO mapreduce.ImportJobBase: Retrieved 12 records.
+
+
+2. Import departments table from mysql to hdfs as sequncefile in departments_sequence directory.
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments -as-sequencefile -target-dir=departments_sequence
+
+17/10/27 14:19:37 INFO mapreduce.ImportJobBase: Transferred 661 bytes in 28.678 seconds (23.049 bytes/sec)
+17/10/27 14:19:37 INFO mapreduce.ImportJobBase: Retrieved 12 records.
+
+
+3. Import departments table from mysql to hdfs as avro file in departments avro directory.
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments -as-avrodatafile -target-dir=departments_avro
+
+17/10/27 14:20:58 INFO mapreduce.ImportJobBase: Transferred 1.6045 KB in 28.2773 seconds (58.1031 bytes/sec)
+17/10/27 14:20:58 INFO mapreduce.ImportJobBase: Retrieved 12 records.
+
+
+4. Import departments table from mysql to hdfs as parquet file in departments_parquet directory.
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments -as-parquetfile -target-dir=departments_parquet
+
+17/10/27 14:22:30 INFO mapreduce.ImportJobBase: Transferred 7.1807 KB in 31.4118 seconds (234.0843 bytes/sec)
+17/10/27 14:22:30 INFO mapreduce.ImportJobBase: Retrieved 12 records.
+
