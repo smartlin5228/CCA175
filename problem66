@@ -1,0 +1,6 @@
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments --target-dir=departments --fields-terminated-by '|' --lines-terminated-by '\n' -m 1
+
+
+17/10/26 19:22:24 INFO mapreduce.ImportJobBase: Transferred 141 bytes in 20.1689 seconds (6.991 bytes/sec)
+17/10/26 19:22:24 INFO mapreduce.ImportJobBase: Retrieved 12 records.
+
