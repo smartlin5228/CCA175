@@ -1,0 +1,35 @@
+1 . Select all the products name and quantity having quantity <= 2000
+
+scala> val product = sc.textFile("problem71/product.csv").map(_.split(","))
+product: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[2] at map at <console>:27
+
+scala> case class Product(productID: Integer, productCode: String, name: String, price: Float, supplierID: Integer)
+defined class Product
+
+scala> val productRDD =  product.map(p => Product(p(0).toInt, p(1), p(2), p(3).toFloat, p(4).toInt))
+productRDD: org.apache.spark.rdd.RDD[Product] = MapPartitionsRDD[3] at map at <console>:31
+
+scala> val productDF = productRDD.toDF()
+productDF: org.apache.spark.sql.DataFrame = [productID: int, productCode: string, name: string, price: float, supplierID: int]
+
+scala> productDF.registerTempTable("products")
+val results = sqlContext.sql(......SELECT name, quantity FROM products WHERE quantity
+< = 2000......)
+
+2 . Select name and price of the product having code as 'PEN'
+
+val results = sqlContext.sql(......SELECT name, price FROM products WHERE code =
+'PEN'.......)
+
+3 . Select all the products, which name starts with PENCIL
+
+val results = sqlContext.sql(......SELECT name, price FROM products WHERE upper(name) LIKE 'PENCIL%'.......)
+
+4 . Select all products which "name" begins with 'P\ followed by any two characters, followed by space, followed by zero or more characters
+
+val results = sqlContext.sql(......SELECT name, price FROM products WHERE upper(name) LIKE 'P__ %'.......)
+
+
+
+_ for single character
+% for one or more character
