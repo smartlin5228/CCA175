@@ -1,0 +1,11 @@
+Now export data from hive table departments_hive01 in departments_hive02. While exporting, please note following. wherever there is a empty string it should be loaded as a null value in mysql.
+wherever there is -999 value for int field, it should be created as null value.
+
+
+
+[cloudera@quickstart ~]$ sqoop export --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments_hive01 -input-fields-terminated-by '\001' --input-lines-terminated-by '\n' -m 1 -batch -input-null-string "" -input-null-non-string -999 --export-dir /user/hive/warehouse/departments_hive01
+
+
+17/10/27 15:22:49 INFO mapreduce.ExportJobBase: Transferred 291 bytes in 17.6069 seconds (16.5276 bytes/sec)
+17/10/27 15:22:49 INFO mapreduce.ExportJobBase: Exported 9 records.
+
