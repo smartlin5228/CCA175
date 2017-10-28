@@ -1,0 +1,60 @@
+1. Copy "retail_db.order_items" table to hdfs in respective directory p90_order_items .
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=order_items --target-dir=p90_orderItems -m 1
+
+17/10/27 22:00:49 INFO mapreduce.ImportJobBase: Transferred 5.1583 MB in 19.5046 seconds (270.8132 KB/sec)
+17/10/27 22:00:49 INFO mapreduce.ImportJobBase: Retrieved 172198 records.
+
+
+2. Do the summation of entire revenue in this table using pyspark.
+
+>>> tableRDD = sc.textFile("p90_orderItems")
+>>> revenue = tableRDD.map(lambda line: float(line.split(",")[4]))
+>>> for rev in revenue.collect():
+>>>   print rev
+1999.99
+129.99
+179.97
+299.98
+129.99
+129.99
+129.99
+999.99
+149.94
+250.0
+199.99
+249.9
+149.94
+129.99
+59.99
+50.0
+1999.99
+150.0
+
+>>> total = revenue.reduce(lambda a,b: a + b)
+>>> total
+34322619.930029497
+>>> max = revenue.reduce(lambda a,b: a if a >= b else b)
+>>> max                                                                         
+1999.99
+>>> min = revenue.reduce(lambda a,b: a if a <= b else b)
+>>> min                                                                         
+9.9900000000000002
+
+
+3. Find the maximum and minimum revenue as well.
+
+>>> max = revenue.reduce(lambda a,b: a if a >= b else b)
+>>> max                                                                         
+1999.99
+>>> min = revenue.reduce(lambda a,b: a if a <= b else b)
+>>> min                                                                         
+9.9900000000000002
+
+
+4. Calculate average revenue
+
+>>> avg = total / (revenue.count())
+>>> avg
+199.32066533890927
+
