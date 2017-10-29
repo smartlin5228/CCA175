@@ -1,0 +1,94 @@
+1. Create a table in retailedb with following definition.
+CREATE table departments_new (department_id int(11), department_name varchar(45), created_date T1MESTAMP DEFAULT NOW());
+
+mysql> use retail_db
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> CREATE TABLE departments_new(department_id int(11), department_name varchar(45), createddate TIMESTAMP DEFAULT NOW());
+Query OK, 0 rows affected (0.03 sec)
+
+
+2 . Now isert records from departments table to departments_new
+
+mysql> INSERT INTO departments_new (SELECT * FROM departments);
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> desc departments
+    -> ;
++-----------------+-------------+------+-----+---------+----------------+
+| Field           | Type        | Null | Key | Default | Extra          |
++-----------------+-------------+------+-----+---------+----------------+
+| department_id   | int(11)     | NO   | PRI | NULL    | auto_increment |
+| department_name | varchar(45) | NO   |     | NULL    |                |
++-----------------+-------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> desc departments_new
+    -> ;
++-----------------+-------------+------+-----+-------------------+-------+
+| Field           | Type        | Null | Key | Default           | Extra |
++-----------------+-------------+------+-----+-------------------+-------+
+| department_id   | int(11)     | YES  |     | NULL              |       |
+| department_name | varchar(45) | YES  |     | NULL              |       |
+| createddate     | timestamp   | NO   |     | CURRENT_TIMESTAMP |       |
++-----------------+-------------+------+-----+-------------------+-------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO departments_new (SELECT department_id,department_name,null FROM departments);
+Query OK, 12 rows affected (0.00 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> select * from departments_new;
++---------------+-----------------+---------------------+
+| department_id | department_name | createddate         |
++---------------+-----------------+---------------------+
+|             2 | Fitness         | 2017-10-29 03:59:46 |
+|             3 | Footwear        | 2017-10-29 03:59:46 |
+|             4 | Apparel         | 2017-10-29 03:59:46 |
+|             5 | Golf            | 2017-10-29 03:59:46 |
+|             6 | Outdoors        | 2017-10-29 03:59:46 |
+|             7 | Fan Shop        | 2017-10-29 03:59:46 |
+|            10 | physics         | 2017-10-29 03:59:46 |
+|            11 | Chemistry       | 2017-10-29 03:59:46 |
+|            12 | Fathematics     | 2017-10-29 03:59:46 |
+|            13 | Science         | 2017-10-29 03:59:46 |
+|            14 | Engineering     | 2017-10-29 03:59:46 |
+|          1000 | Management      | 2017-10-29 03:59:46 |
++---------------+-----------------+---------------------+
+12 rows in set (0.00 sec)
+
+
+3 . Now import data from departments_new table to hdfs.
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --table=departments_new --username=retail_dba --password=cloudera --target-dir=departments_new --split-by department_name
+
+17/10/29 04:03:34 INFO mapreduce.ImportJobBase: Transferred 405 bytes in 30.2147 seconds (13.4041 bytes/sec)
+17/10/29 04:03:34 INFO mapreduce.ImportJobBase: Retrieved 12 records.
+
+
+4 . Insert following 5 records in departmentsnew table. Insert into departments_new values(110, "Civil" , null); Insert into departments_new values(111, "Mechanical" , null);
+Insert into departments_new values(112, "Automobile" , null); Insert into departments_new values(113, "Pharma" , null);
+Insert into departments_new values(114, "Social Engineering" , null);
+
+
+mysql> Insert into departments_new values(110, "Civil" , null);
+Query OK, 1 row affected (0.00 sec)
+
+mysql>  Insert into departments_new values(111, "Mechanical" , null);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> Insert into departments_new values(112, "Automobile" , null);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> Insert into departments_new values(113, "Pharma" , null);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> Insert into departments_new values(114, "Social Engineering" , null);
+Query OK, 1 row affected (0.01 sec)
+
+
+5. Now do the incremental import based on created_date column.
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments_new --target-dir=departments_new -append -check-column createddate -incremental lastmodified -split-by department_name -last-value "2017-10-29 03:59:46"
+
