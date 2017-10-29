@@ -1,0 +1,10 @@
+scala> val name = sc.textFile("data/data.txt")
+name: org.apache.spark.rdd.RDD[String] = data/data.txt MapPartitionsRDD[6] at textFile at <console>:27
+
+scala> val nameRDD = name.map(line => (line.split(",")(0).trim, line.split(",")(1)))
+nameRDD: org.apache.spark.rdd.RDD[(String, String)] = MapPartitionsRDD[7] at map at <console>:29
+
+scala> val swappedAndCombined =  nameRDD.map(_.swap).combineByKey(List(_), (x:List[String], y:String) => y ::x, (x:List[String], y:List[String]) => x ::: y)
+swappedAndCombined: org.apache.spark.rdd.RDD[(String, List[String])] = ShuffledRDD[9] at combineByKey at <console>:31
+scala> swappedAndCombined.repartition(1).saveAsTextFile("output/result.txt")
+
