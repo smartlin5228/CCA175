@@ -1,0 +1,16 @@
+scala> val a = sc.parallelize(List("dog", "tiger", "lion", "cat", "panther", "eagle"))
+a: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[1] at parallelize at <console>:27
+
+scala> val b = a.map(x => (x.length, x))
+b: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[2] at map at <console>:29
+
+operation1
+Write a correct code snippet for operationl which will produce desired output, shown below.
+Array[(lnt, String)] = Array((4,lion), (7,panther), (3,dogcat), (5,tigereagle))
+
+scala> b.foldByKey("")(_ + _)
+res6: org.apache.spark.rdd.RDD[(Int, String)] = ShuffledRDD[3] at foldByKey at <console>:32
+
+scala> b.foldByKey("")(_ + _).collect
+res7: Array[(Int, String)] = Array((4,lion), (3,dogcat), (7,panther), (5,tigereagle))
+
