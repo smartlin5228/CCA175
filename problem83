@@ -1,0 +1,11 @@
+1. Import joined result of orders and order_items table join on orders.order_id = order_items.order_item_order_id.
+2 . Also make sure each tables file is partitioned in 2 files e.g. part-00000, part-00002
+3 . Also make sure you use orderid columns for sqoop to use for boundary conditions.
+
+
+
+udera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera -query="SELECT * FROM orders join order_items ON orders.order_id=order_items.order_item_order_id WHERE \$CONDITIONS" -target-dir /user/cloudera/order_join -split-by order_id -m 2
+
+17/10/29 03:36:41 INFO mapreduce.ImportJobBase: Transferred 12.3139 MB in 27.2891 seconds (462.0696 KB/sec)
+17/10/29 03:36:41 INFO mapreduce.ImportJobBase: Retrieved 172198 records.
+
