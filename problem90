@@ -1,0 +1,13 @@
+1. Import department tables using your custom boundary query, which import departments between 1 to 25.
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=departments -target-dir=departments -m 2 -boundary-query "SELECT 1,25 FROM departments" -columns department_id,department_name
+
+
+2 . Also make sure each tables file is partitioned in 2 files e.g. part-00000, part-00002
+
+-m 2
+
+3 . Also make sure you have imported only two columns from table, which are department_id,department_name
+
+-columns department_id,department_name
+
