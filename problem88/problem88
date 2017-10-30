@@ -1,0 +1,45 @@
+Write down a Spark script using Python,
+In which it read a file "Content.txt" (On hdfs) with following content.
+After that split each row as (key, value), where key is first word in line and entire line as value.
+Filter out the empty lines.
+And save this key value in "problem86" as Sequence file(On hdfs)
+Part 2 : Save as sequence file , where key as null and entire line as value. Read back the stored sequence files.
+
+>>> contentRDD = sc.textFile("data/Content.txt")
+>>> nonempty = contentRDD.filter(lambda x: len(x) > 0)
+>>> words = nonempty.map(lambda x: tuple(x.split(",")))
+>>> words.saveAsSequenceFile("problem88")
+>>> words = nonempty.map(lambda x: tuple(x.split(" ")))
+>>> words.saveAsSequenceFile("problem88")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/lib/spark/python/pyspark/rdd.py", line 1437, in saveAsSequenceFile
+    path, compressionCodecClass)
+  File "/usr/lib/spark/python/lib/py4j-0.9-src.zip/py4j/java_gateway.py", line 813, in __call__
+  File "/usr/lib/spark/python/pyspark/sql/utils.py", line 45, in deco
+    return f(*a, **kw)
+  File "/usr/lib/spark/python/lib/py4j-0.9-src.zip/py4j/protocol.py", line 308, in get_return_value
+py4j.protocol.Py4JJavaError: An error occurred while calling z:org.apache.spark.api.python.PythonRDD.saveAsSequenceFile.
+: org.apache.spark.SparkException: RDD element of type [Ljava.lang.Object; cannot be used
+	at org.apache.spark.api.python.SerDeUtil$.pythonToPairRDD(SerDeUtil.scala:236)
+	at org.apache.spark.api.python.PythonRDD$.saveAsHadoopFile(PythonRDD.scala:745)
+	at org.apache.spark.api.python.PythonRDD$.saveAsSequenceFile(PythonRDD.scala:720)
+	at org.apache.spark.api.python.PythonRDD.saveAsSequenceFile(PythonRDD.scala)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:231)
+	at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:381)
+	at py4j.Gateway.invoke(Gateway.java:259)
+	at py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:133)
+	at py4j.commands.CallCommand.execute(CallCommand.java:79)
+	at py4j.GatewayConnection.run(GatewayConnection.java:209)
+	at java.lang.Thread.run(Thread.java:745)
+
+>>> words.collect()
+[(u'Hello', u'this', u'is', u'ABCTECH.com'), (u'This', u'is', u'XYZTECH.com'), (u'Apache', u'Spark', u'Training'), (u'This', u'is', u'Spark', u'Learning', u'Session'), (u'Spark', u'is', u'faster', u'than', u'MapReduce')]
+
+>>> nonempty
+PythonRDD[9] at RDD at PythonRDD.scala:43
+>>> nonempty.map(lambda line: (None, line)).saveAsSequenceFile("Problem88_
