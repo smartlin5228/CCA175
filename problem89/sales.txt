@@ -1,0 +1,11 @@
+Sales,Trainee,12000,UP
+Sales,Lead,32000,AP
+Sales,Lead,32000,LA
+Sales,Lead,32000,TN
+Sales,Lead,32000,AP
+Sales,Lead,32000,TN
+Sales,Lead,32000,LA
+Sales,Lead,32000,LA
+Marketing,Associate,18000,TN
+Marketing,Associate,18000,TN
+HR,Manager,58000,TN

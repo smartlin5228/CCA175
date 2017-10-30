@@ -1,0 +1,16 @@
+scala> val raw = sc.textFile("data/sales.txt")
+raw: org.apache.spark.rdd.RDD[String] = data/sales.txt MapPartitionsRDD[1] at textFile at <console>:27
+
+scala> case class Employee(dep:String, des:String, cost:Double, state:String)
+defined class Employee
+
+scala> val employee = raw.map(_.split(",")).map(row => Employee(row(0), row(1), row(2).toDouble, row(3)))
+employee: org.apache.spark.rdd.RDD[Employee] = MapPartitionsRDD[3] at map at <console>:31
+
+scala> val keyVals = employee.map( em => ((em.dep, em.des, em.state), (1 , em.cost)))
+keyVals: org.apache.spark.rdd.RDD[((String, String, String), (Int, Double))] = MapPartitionsRDD[4] at map at <console>:33
+
+scala> val results = keyVals.reduceByKey((a,b) => (a._1 + b._1, a._2 + b._2))
+results: org.apache.spark.rdd.RDD[((String, String, String), (Int, Double))] = ShuffledRDD[5] at reduceByKey at <console>:35
+
+scala> results.repartition(1).saveAsTextFile("output/problem89")
