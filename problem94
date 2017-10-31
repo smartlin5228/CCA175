@@ -1,0 +1,23 @@
+You have been given below code snippet.
+val a = sc.parallelize(List("dog", "cat", "owl", "gnu", "ant"), 2)
+val b = sc.parallelize(1 to a.count.tolnt, 2)
+val c = a.zip(b)
+operation1
+Write a correct code snippet for operationl which will produce desired output, shown below.
+Array[(String, Int)] = Array((owl,3), (gnu,4), (dog,1), (cat,2), (ant,5))
+
+
+
+
+scala> c.sortByKey(false).collect
+res2: Array[(String, Int)] = Array((owl,3), (gnu,4), (dog,1), (cat,2), (ant,5)) 
+
+
+
+
+
+Solution : c.sortByKey(false).collect
+sortByKey [Ordered] : This function sorts the input RDD's data and stores it in a new RDD.
+"The output RDD is a shuffled RDD because it stores data that is output by a reducer which has been shuffled. The implementation of this function is actually very clever.
+First, it uses a range partitioner to partition the data in ranges within the shuffled RDD.
+Then it sorts these ranges individually with mapPartitions using standard sort mechanisms.
