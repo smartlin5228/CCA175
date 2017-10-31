@@ -1,0 +1,118 @@
+Columns of order table : (orderid , order_date , order_customer_id, order_status)
+Columns of ordeMtems table : (order_item_id , order_item_order_ld ,
+order_item_product_id, order_item_quantity,order_item_subtotal,order_
+item_product_price)
+Please accomplish following activities.
+1. Copy "retail_db.orders" and "retail_db.order_items" table to hdfs in respective directory p92_orders and p92 order items .
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=orders --target-dir=p92_orders -m 1
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=order_items --target-dir=p92_order_items -m 1
+
+
+2 . Join these data using orderid in Spark and Python
+
+>>> orders = sc.textFile("p92_orders")
+>>> order_items = sc.textFile("p92_order_items")
+>>> orders.first()
+u'1,2013-07-25 00:00:00.0,11599,CLOSED'
+>>> ordersPair = orders.map(lambda line: (int(line.split(",")[0]), line))
+>>> orderItemsPair = order_items.map(lambda line: (int(line.split(",")[1]), line))
+>>> joinedData = ordersPair.join(orderItemsPair)
+>>> joinedData.first()
+(32768, (u'32768,2014-02-12 00:00:00.0,1900,PENDING_PAYMENT', u'81958,32768,1073,1,199.99,199.99'))
+cala> val orders = sc.textFile("p92_orders")
+orders: org.apache.spark.rdd.RDD[String] = p92_orders MapPartitionsRDD[1] at textFile at <console>:27
+
+scala> val order_items = sc.textFile("p92_order_items")
+order_items: org.apache.spark.rdd.RDD[String] = p92_order_items MapPartitionsRDD[3] at textFile at <console>:27
+
+scala> orders.first()
+res0: String = 1,2013-07-25 00:00:00.0,11599,CLOSED
+
+scala> order_items.first()
+res1: String = 1,1,957,1,299.98,299.98
+
+scala> val ordersRDD = orders.map(_.split(","))
+ordersRDD: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[4] at map at <console>:29
+
+scala> val ordersPair = ordersRDD.keyBy(x => x(0))
+ordersPair: org.apache.spark.rdd.RDD[(String, Array[String])] = MapPartitionsRDD[5] at keyBy at <console>:31
+
+scala> val order_itemsPair = order_items.map(_.split(",")).keyBy(x => x(1))
+order_itemsPair: org.apache.spark.rdd.RDD[(String, Array[String])] = MapPartitionsRDD[7] at keyBy at <console>:29
+
+scala> val joinedData = ordersPair.join(order_itemsPair)
+joinedData: org.apache.spark.rdd.RDD[(String, (Array[String], Array[String]))] = MapPartitionsRDD[10] at join at <console>:37
+
+scala> joinedData.map(_._1)
+res5: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[11] at map at <console>:40
+
+scala> joinedData.map(_._1).first
+res6: String = 2828
+
+scala> joinedData.map(_._2._1).first
+res7: Array[String] = Array(2828, 2013-08-10 00:00:00.0, 4952, SUSPECTED_FRAUD)
+
+scala> joinedData.map(_._2._1(0)).first
+
+
+
+3 . Calculate total revenue perday and per order
+
+scala> val data = joinedData.map(x => ((x._2._1(1), x._2._1(0)), x._2._2(5)))
+data: org.apache.spark.rdd.RDD[((String, String), String)] = MapPartitionsRDD[16] at map at <console>:39
+
+scala> val totalRevenue = data.reduceByKey(_ + _)
+totalRevenue: org.apache.spark.rdd.RDD[((String, String), String)] = ShuffledRDD[17] at reduceByKey at <console>:41
+
+scala> val totalRevenue = data.reduceByKey(_ + _).collect
+
+scala> val totalRevenue = data.reduceByKey(_ + _).collect
+totalRevenue: Array[((String, String), String)] = Array(((2013-09-30 00:00:00.0,10846),49.98399.98129.9959.9959.99), ((2014-03-12 00:00:00.0,37471),59.99129.9959.99), ((2013-10-15 00:00:00.0,13417),39.99399.9839.9944.99), ((2013-10-04 00:00:00.0,11626),24.9959.99399.98199.99399.98), ((2013-11-17 00:00:00.0,18636),299.9859.99299.9899.9959.99), ((2014-06-20 00:00:00.0,52640),50.0399.9850.039.99129.99), ((2014-05-08 00:00:00.0,65309),299.98199.99), ((2014-07-05 00:00:00.0,54734),50.0), ((2014-03-15 00:00:00.0,38006),99.99299.98), ((2013-10-15 00:00:00.0,67708),99.9959.99), ((2014-04-03 00:00:00.0,41053),59.9949.9859.9949.98), ((2014-03-25 00:00:00.0,39406),51.9950.0), ((2014-04-03 00:00:00.0,68305),399.98), ((2013-10-31 00:00:00.0,15364),99.9949.9815.9939.99129.99), ((2013-10-05 00:00:00.0...
+
+scala> val data = joinedData.map(x => ((x._2._1(1), x._2._1(0)), x._2._2(5).toFloat))
+data: org.apache.spark.rdd.RDD[((String, String), Float)] = MapPartitionsRDD[19] at map at <console>:39
+
+scala> val totalRevenue = data.reduceByKey(_ + _).collect
+totalRevenue: Array[((String, String), Float)] = Array(((2013-09-30 00:00:00.0,10846),699.93), ((2014-03-12 00:00:00.0,37471),249.97002), ((2013-10-15 00:00:00.0,13417),524.95), ((2013-10-04 00:00:00.0,11626),1084.93), ((2013-11-17 00:00:00.0,18636),819.93), ((2014-06-20 00:00:00.0,52640),669.96), ((2014-05-08 00:00:00.0,65309),499.97003), ((2014-07-05 00:00:00.0,54734),50.0), ((2014-03-15 00:00:00.0,38006),399.97), ((2013-10-15 00:00:00.0,67708),159.98), ((2014-04-03 00:00:00.0,41053),219.94), ((2014-03-25 00:00:00.0,39406),101.990005), ((2014-04-03 00:00:00.0,68305),399.98), ((2013-10-31 00:00:00.0,15364),335.94), ((2013-10-05 00:00:00.0,11761),849.94), ((2013-11-03 00:00:00.0,15831),39.99), ((2014-03-14 00:00:00.0,37745),249.99), ((2014-03-28 00:00:00.0,39801),569.96), ((2014-06-07 0...
+
+
+************************************
+
+scala> val totalRevenue = data.sortByKey().reduceByKey(_ + _).collect
+totalRevenue: Array[((String, String), Float)] = Array(((2013-10-19 00:00:00.0,13907),59.99), ((2013-10-12 00:00:00.0,59772),199.98001), ((2013-09-30 00:00:00.0,10846),699.93), ((2013-10-15 00:00:00.0,13417),524.95), ((2013-10-04 00:00:00.0,11626),1084.93), ((2013-11-17 00:00:00.0,18636),819.93), ((2013-09-13 00:00:00.0,59034),309.94), ((2013-10-03 00:00:00.0,11406),569.93), ((2013-08-19 00:00:00.0,4278),469.94), ((2013-10-15 00:00:00.0,67708),159.98), ((2014-01-03 00:00:00.0,26252),279.97), ((2013-09-28 00:00:00.0,10569),219.98), ((2013-08-30 00:00:00.0,5944),649.97003), ((2013-10-31 00:00:00.0,15364),335.94), ((2013-10-05 00:00:00.0,11761),849.94), ((2013-11-03 00:00:00.0,15831),39.99), ((2013-11-27 00:00:00.0,20102),469.96), ((2013-12-20 00:00:00.0,23903),31.99), ((2013-12-25 00:00:0...
+scala> val sortedTotal = totalRevenue.sortByKey()
+<console>:43: error: value sortByKey is not a member of Array[((String, String), Float)]
+         val sortedTotal = totalRevenue.sortByKey()
+
+
+************************************
+scala> def sumFunc(accum:Float, n:Float) = accum + n
+sumFunc: (accum: Float, n: Float)Float
+
+scala> val totalRev = data.reduceByKey(sumFunc)
+totalRev: org.apache.spark.rdd.RDD[((String, String), Float)] = ShuffledRDD[28] at reduceByKey at <console>:43
+
+scala> val totalRev = data.reduceByKey(sumFunc).sortByKey()
+totalRev: org.apache.spark.rdd.RDD[((String, String), Float)] = ShuffledRDD[32] at sortByKey at <console>:43
+
+
+
+4. Calculate total and average revenue for each date. - combineByKey
+-aggregateByKey
+
+scala> val revByDate = dateRev.reduceByKey(sumFunc).sortByKey()
+revByDate: org.apache.spark.rdd.RDD[(String, Float)] = ShuffledRDD[40] at sortByKey at <console>:47
+
+scala> revByDate.collect
+res16: Array[(String, Float)] = Array((2013-07-25 00:00:00.0,45672.062), (2013-07-26 00:00:00.0,91320.93), (2013-07-27 00:00:00.0,70766.99), (2013-07-28 00:00:00.0,58787.977), (2013-07-29 00:00:00.0,90530.3), (2013-07-30 00:00:00.0,68421.94), (2013-07-31 00:00:00.0,86597.3), (2013-08-01 00:00:00.0,84285.46), (2013-08-02 00:00:00.0,71649.36), (2013-08-03 00:00:00.0,63651.438), (2013-08-04 00:00:00.0,61299.895), (2013-08-05 00:00:00.0,52534.758), (2013-08-06 00:00:00.0,82523.766), (2013-08-07 00:00:00.0,68901.74), (2013-08-08 00:00:00.0,50100.67), (2013-08-09 00:00:00.0,43358.125), (2013-08-10 00:00:00.0,87109.72), (2013-08-11 00:00:00.0,48300.773), (2013-08-12 00:00:00.0,79245.84), (2013-08-13 00:00:00.0,25443.79), (2013-08-14 00:00:00.0,70830.055), (2013-08-15 00:00:00.0,67972.305), (20...
+
+scala> val revByDate1 = revByDate.aggregateByKey(atuple)((a,b) => (a._1 + b, a._2 + 1), (a,b) => (a._1 + b._1,  a._2 + b._2))
+revByDate1: org.apache.spark.rdd.RDD[(String, (Float, Float))] = MapPartitionsRDD[42] at aggregateByKey at <console>:51
+
+scala> val average = revByDate1.mapValues(v => v._1/v._2)
+average: org.apache.spark.rdd.RDD[(String, Float)] = MapPartitionsRDD[43] at mapValues at <console>:53
+
+
+
