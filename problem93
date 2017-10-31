@@ -1,0 +1,120 @@
+You have been given MySQL DB with following details.
+user=retail_dba
+password=cloudera
+database=retail_db
+table=retail_db.orders
+table=retail_db.order_items
+jdbc URL = jdbc:mysql://quickstart:3306/retail_db
+Columns of order table : (orderid , order_date , ordercustomerid, order_status}
+.....
+Please accomplish following activities.
+1 . Copy "retail_db.orders" table to hdfs in a directory p91_orders.
+
+[cloudera@quickstart ~]$ sqoop import --connect jdbc:mysql://quickstart:3306/retail_db --username=retail_dba --password=cloudera --table=orders --target-dir p91_orders
+
+17/10/30 22:45:10 INFO mapreduce.ImportJobBase: Transferred 2.861 MB in 38.3999 seconds (76.2927 KB/sec)
+17/10/30 22:45:10 INFO mapreduce.ImportJobBase: Retrieved 68883 records.
+
+
+2 . Once data is copied to hdfs, using pyspark calculate the number of order for each status.
+
+scala> val orders = sc.textFile("p91_orders")
+orders: org.apache.spark.rdd.RDD[String] = p91_orders MapPartitionsRDD[1] at textFile at <console>:27
+
+scala> val status = orders.map(x => (x.split(",")(4), ""))
+status: org.apache.spark.rdd.RDD[(String, String)] = MapPartitionsRDD[2] at map at <console>:29
+
+llOrders = sc.textFile("p91_orders")
+>>> keyValue = allOrders.map(lambda line: (line.split(",")[3], ""))
+>>> output=keyValue.countByKey()
+>>> for line in output: print(line)                                             
+... 
+COMPLETE
+PAYMENT_REVIEW
+PROCESSING
+CANCELED
+PENDING
+CLOSED
+PENDING_PAYMENT
+SUSPECTED_FRAUD
+ON_HOLD
+>>> output=keyValue.countByKey().items()
+>>> for line in output: print(line)
+... 
+(u'COMPLETE', 22899)
+(u'PAYMENT_REVIEW', 729)
+(u'PROCESSING', 8275)
+(u'CANCELED', 1428)
+(u'PENDING', 7610)
+(u'CLOSED', 7556)
+(u'PENDING_PAYMENT', 15030)
+(u'SUSPECTED_FRAUD', 1558)
+(u'ON_HOLD', 3798)
+
+>>> keyValue = allOrders.map(lambda line: (line.split(",")[3], 1))
+>>> keyValue.groupByKey().map(lambda kv: (kv[0], sum(kv[1])))
+PythonRDD[8] at RDD at PythonRDD.scala:43
+>>> output =keyValue.groupByKey().map(lambda kv: (kv[0], sum(kv[1])))
+>>> for line in output.collect(): print(line)
+... 
+(u'SUSPECTED_FRAUD', 1558)                                                      
+(u'CANCELED', 1428)
+(u'COMPLETE', 22899)
+(u'PENDING_PAYMENT', 15030)
+(u'PENDING', 7610)
+(u'CLOSED', 7556)
+(u'ON_HOLD', 3798)
+(u'PROCESSING', 8275)
+(u'PAYMENT_REVIEW', 729)
+
+
+>>> keyValue.reduceByKey(lambda a, b: a + b)
+PythonRDD[18] at RDD at PythonRDD.scala:43
+>>> for line in output.collect(): print(line)
+... 
+(u'SUSPECTED_FRAUD', 1558)                                                      
+(u'CANCELED', 1428)
+(u'COMPLETE', 22899)
+(u'PENDING_PAYMENT', 15030)
+(u'PENDING', 7610)
+(u'CLOSED', 7556)
+(u'ON_HOLD', 3798)
+(u'PROCESSING', 8275)
+(u'PAYMENT_REVIEW', 729)
+
+
+>>> keyValue = allOrders.map(lambda line: (line.split(",")[3], line))
+>>> output=keyValue.aggregateByKey(0, lambda a, b: a+1, lambda a, b: a+b)
+>>> for line in output.collect(): print(line)
+... 
+(u'SUSPECTED_FRAUD', 1558)                                                      
+(u'CANCELED', 1428)
+(u'COMPLETE', 22899)
+(u'PENDING_PAYMENT', 15030)
+(u'PENDING', 7610)
+(u'CLOSED', 7556)
+(u'ON_HOLD', 3798)
+(u'PROCESSING', 8275)
+(u'PAYMENT_REVIEW', 729)
+
+
+>>> keyValue = allOrders.map(lambda line: (line.split(",")[3], line))>>> output=keyValue.combineByKey(lambda value: 1, lambda acc, value: acc+1, lambda acc, value: acc+value)
+>>> for line in output.collect(): print(line)... 
+[Stage 10:===========================================>              (3 + 1) / 4]17/10/31 01:41:24 WARN spark.ExecutorAllocationManager: No stages are running, but numRunningTasks != 0
+(u'SUSPECTED_FRAUD', 1558)                                                      
+(u'CANCELED', 1428)
+(u'COMPLETE', 22899)
+(u'PENDING_PAYMENT', 15030)
+(u'PENDING', 7610)
+(u'CLOSED', 7556)
+(u'ON_HOLD', 3798)
+(u'PROCESSING', 8275)
+(u'PAYMENT_REVIEW', 729)
+
+
+3 . Use all the following methods to calculate the number of order for each status. (You need to know all these functions and its behavior for real exam)
+- countByKey()
+-groupByKey()
+- reduceByKey()
+-aggregateByKey()
+- combineByKey()
